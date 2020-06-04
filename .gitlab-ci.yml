@@ -1,0 +1,51 @@
+# Documentation:
+# - https://code.gestionexterne.com/help/ci/quick_start/README
+# - https://code.gestionexterne.com/help/ci/yaml/README.md
+# - https://code.gestionexterne.com/help/ci/variables/README.md
+
+# Image de base Gitlab basée sur Alpine Linux
+image: docker:latest
+
+variables:
+  DOCKER_DRIVER: overlay2
+  AWS_REGION: "changeme"
+  REPO_ID: "changeme"
+  REPO_SUBDIR: "changeme"
+  # Image names
+  IMAGE_DOTNET31_NODELTE: "netcore31-node"
+  # Utilitaires
+  ECS_CLI_URL: "https://s3.amazonaws.com/amazon-ecs-cli/ecs-cli-linux-amd64-latest"
+  
+stages:
+  - build
+
+# Création et publication d'une image de conteneur
+.build_task:
+  stage: build
+  allow_failure: false
+  before_script:
+    # Installation du CLI de AWS
+    - apk add --no-cache curl jq python3 py3-pip wget
+    - pip install awscli
+    # Authentification au registre et validation de l'existence du dépôt
+    - echo ${AWS_ACCESS_KEY_ID}
+    - $(aws ecr get-login --no-include-email --region ${AWS_REGION})
+    - aws ecr describe-repositories --registry-id ${REPO_ID} --repository-names ${REPO_NAME} --region ${AWS_REGION} || aws ecr create-repository --repository-name ${REPO_NAME} --region ${AWS_REGION}
+  after_script:
+    - docker logout
+
+build:netcore31-node:
+  extends: .build_task
+  script:
+    # Création de l'image Docker
+    - docker build -t "${IMAGE_NAME}" containers/netcore31-node
+    - docker push ${IMAGE_NAME}
+  variables:
+    REPO_NAME: ${REPO_SUBDIR}
+    IMAGE_NAME: ${REPO_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${REPO_SUBDIR}/${IMAGE_DOTNET31_NODELTE}:latest
+  only:
+    refs:
+      - master
+    changes:
+      - containers/netcore31-node/Dockerfile
+
