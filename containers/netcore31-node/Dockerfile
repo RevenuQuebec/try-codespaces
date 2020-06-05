@@ -1,7 +1,6 @@
-#-------------------------------------------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See https://go.microsoft.com/fwlink/?linkid=2090316 for license information.
-#-------------------------------------------------------------------------------------------------------------
+# Preconfigured deccontainer doker image for development with .NET Core 3.1 and/or Node LTE
+# This container definition is base on Microsoft devcontainers: https://github.com/microsoft/vscode-dev-containers
+# And also my experience working with VS Code Remote Development
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1
 
@@ -15,10 +14,15 @@ ARG USERNAME=vscode
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
+# Create a dedicated user for nvm as it can be shared by vscode and root users
+ARG USER_NVM_NAME=nvm
+ARG USER_NVM_UID=1100
+ARG USER_NVM_GID=$USER_NVM_UID
+
 # [Optional] Version of Node.js to install.
 ARG INSTALL_NODE="true"
 ARG NODE_VERSION="lts/*"
-ENV NVM_DIR=/home/$USERNAME/.nvm
+ENV NVM_DIR=/home/$USER_NVM_NAME/.nvm
 
 # [Optional] Install the Azure CLI
 ARG INSTALL_AZURE_CLI="true"
@@ -34,8 +38,6 @@ RUN apt-get update \
     && apt-get -y install --no-install-recommends apt-utils dialog rsync 2>&1 \
     ## install locales
     && apt-get -y install --no-install-recommends locales 2>&1 \
-    # && locale-gen en_US.UTF-8 \
-    # && update-locale LANG="en_US.UTF-8" \
     && update-locale LANG=C.UTF-8 \
     #
     # Verify git, process tools, lsb-release (common in install instructions for CLIs) installed
@@ -47,6 +49,14 @@ RUN apt-get update \
     # Non sudo docker acces for USERNAME
     && groupadd -g 800 docker \
     && usermod -a -G docker $USERNAME \
+    #
+    # Create a non-root nvm for shared nvm user / root usage.
+    && groupadd --gid $USER_NVM_GID $USER_NVM_NAME \
+    && useradd -s /bin/bash --uid $USER_NVM_UID --gid $USER_NVM_GID -m $USER_NVM_NAME \
+    && usermod -a -G $USER_NVM_NAME $USERNAME \
+    && usermod -a -G $USER_NVM_NAME root \
+    # Disable nvm login
+    && passwd -l $USER_NVM_NAME \
     # [Optional] Add sudo support for the non-root user
     && apt-get install -y sudo \
     && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME\
@@ -60,6 +70,8 @@ RUN apt-get update \
     # Set owner to .vscode-serverXYZ folders
     && chown -R $USERNAME:$USERNAME \
         /home/$USERNAME \
+    # Set dotnet tools user path
+    && echo 'export PATH="~/.dotnet/tools:$PATH"'> /etc/profile.d/dotnet.sh \
     #
     # Install Docker CE CLI
     && apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common lsb-release \
@@ -79,18 +91,23 @@ RUN apt-get update \
     && if [ "$INSTALL_NODE" = "true" ]; then \
         #
         # Install nvm and Node
-        mkdir ${NVM_DIR} \
+        mkdir -p ${NVM_DIR} \
+        && chmod -R g+rwx /home/$USER_NVM_NAME \
         && curl -so- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash 2>&1 \
-        && chown -R $USERNAME:$USERNAME ${NVM_DIR} \
         && /bin/bash -c "source $NVM_DIR/nvm.sh \
             && nvm install ${NODE_VERSION} \
             && nvm alias default ${NODE_VERSION}" 2>&1 \
+        # Set owner and file access to nvm folders
+        && chown -R $USER_NVM_NAME:$USER_NVM_NAME /home/$USER_NVM_NAME \
+        && chmod -R g+w "$NVM_DIR" \
         && chmod a+r "$NVM_DIR/nvm.sh" \
         && chmod a+r "$NVM_DIR/bash_completion" \
         && echo "export NVM_DIR='$NVM_DIR'" > /etc/profile.d/nvm.sh \
         && echo '[ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh" || true' >> /etc/profile.d/nvm.sh \
         && echo '[ -s "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion" || true' >> /etc/profile.d/nvm.sh \
         && chmod 644 /etc/profile.d/nvm.sh \
+        # Set node modules path
+        && echo 'export PATH="./node_modules/.bin:$PATH"' > /etc/profile.d/node_modules.sh \
         #
         # Install yarn
         && curl -sS https://dl.yarnpkg.com/$(lsb_release -is | tr '[:upper:]' '[:lower:]')/pubkey.gpg | apt-key add - 2>/dev/null \
@@ -112,7 +129,7 @@ RUN apt-get update \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
 
-# Debian containers have a bug tosepport locales, so we use C.UTF-8
+# Debian containers have a bug supporting locales in containers, so we use C.UTF-8 because some app need it.
 ENV LC_ALL C.UTF-8
 ENV LANG C.UTF-8
 ENV LANGUAGE C.UTF-8
