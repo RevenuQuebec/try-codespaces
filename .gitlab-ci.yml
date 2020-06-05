@@ -15,7 +15,7 @@ variables:
   IMAGE_DOTNET31_NODELTE: "netcore31-node"
   # Utilitaires
   ECS_CLI_URL: "https://s3.amazonaws.com/amazon-ecs-cli/ecs-cli-linux-amd64-latest"
-  
+
 stages:
   - build
 
