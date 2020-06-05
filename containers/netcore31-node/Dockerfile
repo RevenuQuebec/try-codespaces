@@ -27,7 +27,7 @@ ARG INSTALL_AZURE_CLI="true"
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Docker Compose version
-ARG COMPOSE_VERSION=1.25.5
+ARG COMPOSE_VERSION=1.26.0
 
 # Configure apt and install packages
 RUN apt-get update \
