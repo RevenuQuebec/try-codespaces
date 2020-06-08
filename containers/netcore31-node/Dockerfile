@@ -1,4 +1,4 @@
-# Preconfigured deccontainer doker image for development with .NET Core 3.1 and/or Node LTE
+# Preconfigured deccontainer docker image for development with .NET Core 3.1 and/or Node LTE
 # This container definition is base on Microsoft devcontainers: https://github.com/microsoft/vscode-dev-containers
 # And also my experience working with VS Code Remote Development
 

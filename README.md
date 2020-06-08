@@ -12,4 +12,4 @@ Also I added some extras from my experience working with VS Code Remote Developm
 
 ## Docker images
 
-All docker images defined here can be found on [Dockerhub](https://hub.docker.com/repository/docker/petganrq/try-it/tags).
+All docker images defined here can be found on [Dockerhub](https://hub.docker.com/r/petganrq/try-it/tags).
