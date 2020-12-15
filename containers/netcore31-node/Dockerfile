@@ -2,7 +2,7 @@
 # This container definition is base on Microsoft devcontainers: https://github.com/microsoft/vscode-dev-containers
 # And also my experience working with VS Code Remote Development
 
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1
+FROM mcr.microsoft.com/dotnet/sdk:3.1
 
 ENV DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
 
@@ -31,7 +31,7 @@ ARG INSTALL_AZURE_CLI="true"
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Docker Compose version
-ARG COMPOSE_VERSION=1.26.0
+ARG COMPOSE_VERSION=1.27.4
 
 # Configure apt and install packages
 RUN apt-get update \
@@ -41,7 +41,7 @@ RUN apt-get update \
     && update-locale LANG=C.UTF-8 \
     #
     # Verify git, process tools, lsb-release (common in install instructions for CLIs) installed
-    && apt-get -y install git openssh-client less iproute2 procps apt-transport-https gnupg2 curl lsb-release \
+    && apt-get -y install git bzip2 openssh-client less iproute2 procps apt-transport-https gnupg2 curl lsb-release \
     #
     # Create a non-root user to use if preferred - see https://aka.ms/vscode-remote/containers/non-root-user.
     && groupadd --gid $USER_GID $USERNAME \
