@@ -69,16 +69,14 @@ docker pull petganrq/try-it:devcontainers_netcore31-node-latest
   "containerEnv": {
     "NUGET_XMLDOC_MODE": "none",
     "ASPNETCORE_ENVIRONMENT": "Development",
-    "ASPNETCORE_Kestrel__Endpoints__Http__Url" :"http://localhost:5000",
-    "ASPNETCORE_Kestrel__Endpoints__Https__Url": "https://localhost:5001",
+    "ASPNETCORE_URLS" :"http://localhost:5000",
     // Pass in the host directory for Docker mount commands from inside the container
     "DEV_HOST_PROJECT_PATH": "${localWorkspaceFolder}"
   },
   "remoteEnv": {
     "NUGET_XMLDOC_MODE": "none",
     "ASPNETCORE_ENVIRONMENT": "Development",
-    "ASPNETCORE_Kestrel__Endpoints__Http__Url" :"http://localhost:5000",
-    "ASPNETCORE_Kestrel__Endpoints__Https__Url": "https://localhost:5001",
+    "ASPNETCORE_URLS" :"http://localhost:5000",
     // Pass in the host directory for Docker mount commands from inside the container
     "DEV_HOST_PROJECT_PATH": "${localWorkspaceFolder}"
   },

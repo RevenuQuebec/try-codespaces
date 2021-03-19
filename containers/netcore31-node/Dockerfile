@@ -110,7 +110,7 @@ RUN apt-get update \
         && echo '[ -s "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion" || true' >> /etc/profile.d/nvm.sh \
         && chmod 644 /etc/profile.d/nvm.sh \
         # Set node modules path
-        && echo 'export PATH="./node_modules/.bin:$PATH"' > /etc/profile.d/node_modules.sh \
+        && echo 'export PATH="./node_modules/.bin:$PATH"' > /etc/profile.d/node_modules.sh; \
         #
         # Install yarn
         # && curl -sS https://dl.yarnpkg.com/$(lsb_release -is | tr '[:upper:]' '[:lower:]')/pubkey.gpg | apt-key add - 2>/dev/null \
