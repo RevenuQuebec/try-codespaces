@@ -4,8 +4,6 @@
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0
 
-ENV DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
-
 # This Dockerfile adds a non-root user with sudo access. Use the "remoteUser"
 # property in devcontainer.json to use it. On Linux, the container user's GID/UIDs
 # will be updated to match your local UID/GID (when using the dockerFile property).
@@ -22,16 +20,20 @@ ARG USER_NVM_GID=$USER_NVM_UID
 # [Optional] Version of Node.js to install.
 ARG INSTALL_NODE="true"
 ARG NODE_VERSION="lts/*"
-ENV NVM_DIR=/home/$USER_NVM_NAME/.nvm
 
 # [Optional] Install the Azure CLI
 ARG INSTALL_AZURE_CLI="true"
 
-# Avoid warnings by switching to noninteractive
-ENV DEBIAN_FRONTEND=noninteractive
-
 # Docker Compose version
 ARG COMPOSE_VERSION=1.28.5
+
+ENV \
+    DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1 \
+    NVM_DIR=/home/$USER_NVM_NAME/.nvm \
+    # Avoid questions during Angular npm install
+    NG_ANALYTICS=0 \
+    # Avoid warnings by switching to noninteractive
+    DEBIAN_FRONTEND=noninteractive
 
 # Configure apt and install packages
 RUN apt-get update \
@@ -96,7 +98,8 @@ RUN apt-get update \
         && curl -so- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash 2>&1 \
         && /bin/bash -c "source $NVM_DIR/nvm.sh \
             && nvm install ${NODE_VERSION} \
-            && nvm alias default ${NODE_VERSION}" 2>&1 \
+            && nvm alias default ${NODE_VERSION} \
+            && npm install -g npm typescript yarn 2>&1" \
         # Set owner and file access to nvm folders
         && chown -R $USER_NVM_NAME:$USER_NVM_NAME /home/$USER_NVM_NAME \
         && chmod -R g+w "$NVM_DIR" \
@@ -110,10 +113,10 @@ RUN apt-get update \
         && echo 'export PATH="./node_modules/.bin:$PATH"' > /etc/profile.d/node_modules.sh \
         #
         # Install yarn
-        && curl -sS https://dl.yarnpkg.com/$(lsb_release -is | tr '[:upper:]' '[:lower:]')/pubkey.gpg | apt-key add - 2>/dev/null \
-        && echo "deb https://dl.yarnpkg.com/$(lsb_release -is | tr '[:upper:]' '[:lower:]')/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
-        && apt-get update \
-        && apt-get -y install --no-install-recommends yarn; \
+        # && curl -sS https://dl.yarnpkg.com/$(lsb_release -is | tr '[:upper:]' '[:lower:]')/pubkey.gpg | apt-key add - 2>/dev/null
+        # && echo "deb https://dl.yarnpkg.com/$(lsb_release -is | tr '[:upper:]' '[:lower:]')/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+        # && apt-get update
+        # && apt-get -y install --no-install-recommends yarn;
     fi \
     #
     # [Optional] Install the Azure CLI
