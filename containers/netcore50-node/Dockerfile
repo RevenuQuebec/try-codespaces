@@ -99,7 +99,7 @@ RUN apt-get update \
         && /bin/bash -c "source $NVM_DIR/nvm.sh \
             && nvm install ${NODE_VERSION} \
             && nvm alias default ${NODE_VERSION} \
-            && npm install -g npm typescript yarn 2>&1" \
+            && npm install -g typescript npm" 2>&1 \
         # Set owner and file access to nvm folders
         && chown -R $USER_NVM_NAME:$USER_NVM_NAME /home/$USER_NVM_NAME \
         && chmod -R g+w "$NVM_DIR" \
@@ -110,13 +110,13 @@ RUN apt-get update \
         && echo '[ -s "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion" || true' >> /etc/profile.d/nvm.sh \
         && chmod 644 /etc/profile.d/nvm.sh \
         # Set node modules path
-        && echo 'export PATH="./node_modules/.bin:$PATH"' > /etc/profile.d/node_modules.sh; \
+        && echo 'export PATH="./node_modules/.bin:$PATH"' > /etc/profile.d/node_modules.sh \
         #
         # Install yarn
-        # && curl -sS https://dl.yarnpkg.com/$(lsb_release -is | tr '[:upper:]' '[:lower:]')/pubkey.gpg | apt-key add - 2>/dev/null
-        # && echo "deb https://dl.yarnpkg.com/$(lsb_release -is | tr '[:upper:]' '[:lower:]')/ stable main" | tee /etc/apt/sources.list.d/yarn.list
-        # && apt-get update
-        # && apt-get -y install --no-install-recommends yarn;
+        && curl -sS https://dl.yarnpkg.com/$(lsb_release -is | tr '[:upper:]' '[:lower:]')/pubkey.gpg | apt-key add - 2>/dev/null \
+        && echo "deb https://dl.yarnpkg.com/$(lsb_release -is | tr '[:upper:]' '[:lower:]')/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
+        && apt-get update \
+        && apt-get -y install --no-install-recommends yarn; \
     fi \
     #
     # [Optional] Install the Azure CLI
