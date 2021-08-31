@@ -14,6 +14,7 @@ docker pull petganrq/try-it:devcontainers_netcore50-node-latest
 - **PATH** - the following is added to linux path
   - *~/.dotnet/tools*
   - *./node_modules/.bin*
+- **Bash Completetion**
 - **vscode** - a non root user in case someone needs it. Some tools have issues, so use it if it works for you.
 - **nvm** - Node Version Manager is installed in /home/nvm/.nvm so it can be used from **root** and **vscode** users. Bash completion is configured for all users.
 - **yarn** - Yarn Package Manager
@@ -22,6 +23,7 @@ docker pull petganrq/try-it:devcontainers_netcore50-node-latest
 - **Docker Compose**
 - **Dapr CLI**
 - **Azure CLI**
+- **Hashicorp Terraform**
 
 ## Visual Studio Code Remote or Codespaces
 
@@ -76,7 +78,7 @@ docker pull petganrq/try-it:devcontainers_netcore50-node-latest
   "remoteEnv": {
     "NUGET_XMLDOC_MODE": "none",
     "ASPNETCORE_ENVIRONMENT": "Development",
-    "ASPNETCORE_URLS" :"http://localhost:5000",s
+    "ASPNETCORE_URLS" :"http://localhost:5000",
     // Pass in the host directory for Docker mount commands from inside the container
     "DEV_HOST_PROJECT_PATH": "${localWorkspaceFolder}"
   },

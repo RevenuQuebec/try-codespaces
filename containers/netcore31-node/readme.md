@@ -14,6 +14,7 @@ docker pull petganrq/try-it:devcontainers_netcore31-node-latest
 - **PATH** - the following is added to linux path
   - *~/.dotnet/tools*
   - *./node_modules/.bin*
+- **Bash Completetion**
 - **vscode** - a non root user in case someone needs it. Some tools have issues, so use it if it works for you.
 - **nvm** - Node Version Manager is installed in /home/nvm/.nvm so it can be used from **root** and **vscode** users. Bash completion is configured for all users.
 - **yarn** - Yarn Package Manager
@@ -22,6 +23,7 @@ docker pull petganrq/try-it:devcontainers_netcore31-node-latest
 - **Docker Compose**
 - **Dapr CLI**
 - **Azure CLI**
+- **Hashicorp Terraform**
 
 ## Visual Studio Code Remote or Codespaces
 

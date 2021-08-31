@@ -23,9 +23,11 @@ ARG NODE_VERSION="lts/*"
 
 # [Optional] Install the Azure CLI
 ARG INSTALL_AZURE_CLI="true"
+# [Optional] Install the Hashicorp Terrafrom
+ARG INSTALL_TERRAFORM_CLI="true"
 
 # Docker Compose version
-ARG COMPOSE_VERSION=1.28.5
+ARG COMPOSE_VERSION=1.29.2
 
 ENV \
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1 \
@@ -37,7 +39,7 @@ ENV \
 
 # Configure apt and install packages
 RUN apt-get update \
-    && apt-get -y install --no-install-recommends apt-utils dialog rsync 2>&1 \
+    && apt-get -y install --no-install-recommends apt-utils dialog rsync bash-completion 2>&1 \
     ## install locales
     && apt-get -y install --no-install-recommends locales 2>&1 \
     && update-locale LANG=C.UTF-8 \
@@ -121,10 +123,21 @@ RUN apt-get update \
     #
     # [Optional] Install the Azure CLI
     && if [ "$INSTALL_AZURE_CLI" = "true" ]; then \
-        echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $(lsb_release -cs) main" > /etc/apt/sources.list.d/azure-cli.list \
+        echo "deb [arch=$(dpkg --print-architecture)] https://packages.microsoft.com/repos/azure-cli/ $(lsb_release -cs) main" > /etc/apt/sources.list.d/azure-cli.list \
         && curl -sL https://packages.microsoft.com/keys/microsoft.asc | apt-key add - 2>/dev/null \
         && apt-get update \
         && apt-get install -y azure-cli; \
+    fi \
+    #
+    # [Optional] Install the Azure CLI
+    && if [ "$INSTALL_TERRAFORM_CLI" = "true" ]; then \
+        curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add - \
+        && echo "deb [arch=$(dpkg --print-architecture)] https://apt.releases.hashicorp.com $(lsb_release -cs) main" > /etc/apt/sources.list.d/hashcorp.list \
+        && curl -sL https://packages.microsoft.com/keys/microsoft.asc | apt-key add - 2>/dev/null \
+        && apt-get update \
+        && apt-get install -y terraform \
+        ## Install Terraform bash completion - terraform -install-autocomplete
+        && echo "complete -C /usr/bin/terraform terraform" > /etc/bash_completion.d/terraform-cli; \
     fi \
     #
     # Clean up
@@ -132,7 +145,7 @@ RUN apt-get update \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
 
-# Debian containers have a bug supporting locales in containers, so we use C.UTF-8 because some app need it.
+# Debian containers have a bug supporting locales in containers, so we use C.UTF-8 because some apps need it.
 ENV LC_ALL C.UTF-8
 ENV LANG C.UTF-8
 ENV LANGUAGE C.UTF-8
