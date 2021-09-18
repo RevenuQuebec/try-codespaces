@@ -1,11 +1,11 @@
-# About netcore50-node
+# About netcore60-node
 
-Container for dotnet 5.0 & node development.
+Container for dotnet 6.0 & node development.
 
 Docker
 
 ```
-docker pull petganrq/try-it:devcontainers_netcore50-node-latest
+docker pull petganrq/try-it:devcontainers_netcore60-node-latest
 ```
 
 ## Configurations and tools included into the docker image
@@ -31,8 +31,8 @@ docker pull petganrq/try-it:devcontainers_netcore50-node-latest
 
 ```json
 {
-  "name": "dotnet 5.0 & node lte",
-  "image": "petganrq/try-it:devcontainers_netcore50-node-latest",
+  "name": "dotnet 6.0 & node lte",
+  "image": "petganrq/try-it:devcontainers_netcore60-node-latest",
   // If you prefere to customize the docker image copy "Dockerfile" to the ".devcontainer" folder, uncomment "dockerFile" below and comment "image"
   // "dockerFile": "Dockerfile",
   "settings": {
@@ -180,8 +180,8 @@ docker pull petganrq/try-it:devcontainers_netcore50-node-latest
       },
       "linux": {
         // In order to kill the process correctly use only linux generated executable.
-        // In linux if you use "dotnet run" or "${workspaceFolder}/src/dotnet-project/bin/Debug/netcoreapp5.0/dotnet-project.dll" the main process won't be killed when you stop the debugging.
-        "program": "${workspaceFolder}/src/dotnet-project/bin/Debug/netcoreapp5.0/dotnet-project"
+        // In linux if you use "dotnet run" or "${workspaceFolder}/src/dotnet-project/bin/Debug/netcoreapp6.0/dotnet-project.dll" the main process won't be killed when you stop the debugging.
+        "program": "${workspaceFolder}/src/dotnet-project/bin/Debug/netcoreapp6.0/dotnet-project"
       }
     }
     // ...

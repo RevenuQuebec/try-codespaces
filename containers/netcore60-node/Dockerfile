@@ -1,8 +1,8 @@
-# Preconfigured deccontainer docker image for development with .NET Core 5.0 and/or Node LTE
+# Preconfigured deccontainer docker image for development with .NET 6.0 and/or Node LTE
 # This container definition is base on Microsoft devcontainers: https://github.com/microsoft/vscode-dev-containers
 # And also my experience working with VS Code Remote Development
 
-FROM mcr.microsoft.com/dotnet/sdk:5.0
+FROM mcr.microsoft.com/dotnet/sdk:6.0
 
 # This Dockerfile adds a non-root user with sudo access. Use the "remoteUser"
 # property in devcontainer.json to use it. On Linux, the container user's GID/UIDs
