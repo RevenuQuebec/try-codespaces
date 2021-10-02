@@ -10,6 +10,7 @@ docker pull petganrq/try-it:devcontainers_netcore31-node-latest
 
 ## Configurations and tools included into the docker image
 
+- **"TZ** - set the container time zone to "America/Toronto",
 - **C.UTF-8** - as locale (Debian can't support other locales as of present)
 - **PATH** - the following is added to linux path
   - *~/.dotnet/tools*
@@ -46,6 +47,7 @@ docker pull petganrq/try-it:devcontainers_netcore31-node-latest
   },
   "extensions": [
     "editorconfig.editorconfig",
+    "coenraads.bracket-pair-colorizer-2",
     "doggy8088.netcore-extension-pack",
     "fudge.auto-using",
     "dannymcgee.csharp-grammar-extended",
@@ -60,25 +62,31 @@ docker pull petganrq/try-it:devcontainers_netcore31-node-latest
     "ms-azuretools.vscode-docker",
     "vsls-contrib.codetour",
     "jhipster-ide.jdl",
-    "mikestead.dotenv"
+    "mikestead.dotenv",
+    "ms-dotnettools.csharp",
+    "projektanker.code-butler"
   ],
   "forwardPorts": [
-    // Developemnt backend default http
-    5000,
     // Development backend default https
     5001
   ],
   "containerEnv": {
+    // Container TimeZone
+    // Info: https://github.com/microsoft/vscode-remote-release/issues/4271
+    "TZ": "America/Toronto",
     "NUGET_XMLDOC_MODE": "none",
     "ASPNETCORE_ENVIRONMENT": "Development",
-    "ASPNETCORE_URLS" :"http://localhost:5000",
+    "ASPNETCORE_URLS" :"http://localhost:5001",
     // Pass in the host directory for Docker mount commands from inside the container
     "DEV_HOST_PROJECT_PATH": "${localWorkspaceFolder}"
   },
   "remoteEnv": {
+    // Remote env TimeZone
+    // Info: https://github.com/microsoft/vscode-remote-release/issues/4271
+    "TZ": "America/Toronto",
     "NUGET_XMLDOC_MODE": "none",
     "ASPNETCORE_ENVIRONMENT": "Development",
-    "ASPNETCORE_URLS" :"http://localhost:5000",
+    "ASPNETCORE_URLS" :"http://localhost:5001",
     // Pass in the host directory for Docker mount commands from inside the container
     "DEV_HOST_PROJECT_PATH": "${localWorkspaceFolder}"
   },

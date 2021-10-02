@@ -4,6 +4,7 @@
 
 FROM mcr.microsoft.com/dotnet/sdk:3.1
 
+ARG DEV_CONTAINER_TZ="America/Toronto"
 # This Dockerfile adds a non-root user with sudo access. Use the "remoteUser"
 # property in devcontainer.json to use it. On Linux, the container user's GID/UIDs
 # will be updated to match your local UID/GID (when using the dockerFile property).
@@ -30,6 +31,7 @@ ARG INSTALL_TERRAFORM_CLI="true"
 ARG COMPOSE_VERSION=1.29.2
 
 ENV \
+    TZ=$DEV_CONTAINER_TZ \
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1 \
     NVM_DIR=/home/$USER_NVM_NAME/.nvm \
     # Avoid questions during Angular npm install
