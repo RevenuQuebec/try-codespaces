@@ -28,7 +28,7 @@ ARG INSTALL_AZURE_CLI="true"
 ARG INSTALL_TERRAFORM_CLI="true"
 
 # Docker Compose version
-ARG COMPOSE_VERSION=1.29.2
+ARG COMPOSE_VERSION=2.0.1
 
 ENV \
     TZ=$DEV_CONTAINER_TZ \
@@ -45,6 +45,12 @@ RUN apt-get update \
     ## install locales
     && apt-get -y install --no-install-recommends locales 2>&1 \
     && update-locale LANG=C.UTF-8 \
+    # Fix Let's Encript X3 and R# certificates essue
+    && sed -i '/^mozilla\/DST_Root_CA_X3/s/^/!/' /etc/ca-certificates.conf \
+    && wget -qO /usr/share/ca-certificates/mozilla/Lets_Encript_R3.crt https://letsencrypt.org/certs/lets-encrypt-r3.pem \
+    && chmod u=rw,g=r,o=r /usr/share/ca-certificates/mozilla/Lets_Encript_R3.crt \
+    && echo "mozilla/Lets_Encript_R3.crt" >> /etc/ca-certificates.conf \
+    && update-ca-certificates -f \
     #
     # Verify git, process tools, lsb-release (common in install instructions for CLIs) installed
     && apt-get -y install git bzip2 openssh-client less iproute2 procps apt-transport-https gnupg2 curl lsb-release psmisc \
@@ -65,19 +71,22 @@ RUN apt-get update \
     && passwd -l $USER_NVM_NAME \
     # [Optional] Add sudo support for the non-root user
     && apt-get install -y sudo \
-    && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME\
+    && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME \
-    # Avoiding extension reinstalls on container rebuild (Remote Docker)
-    && mkdir -p /home/$USERNAME/.vscode-server/extensions \
-       /home/$USERNAME/.vscode-server-insiders/extensions \
-       # For root also
-       /root/.vscode-server/extensions \
-       /root/.vscode-server-insiders/extensions \
-    # Set owner to .vscode-serverXYZ folders
-    && chown -R $USERNAME:$USERNAME \
-        /home/$USERNAME \
     # Set dotnet tools user path
     && echo 'export PATH="~/.dotnet/tools:$PATH"'> /etc/profile.d/dotnet.sh \
+    ## Install dotnet bash completion
+    ## https://docs.microsoft.com/en-us/dotnet/core/tools/enable-tab-autocomplete
+    && echo '_dotnet_bash_complete() {' >> /etc/profile.d/dotnet.sh \
+    && echo '  local word=${COMP_WORDS[COMP_CWORD]}' >> /etc/profile.d/dotnet.sh \
+    && echo '  local completions' >> /etc/profile.d/dotnet.sh \
+    && echo '  completions="$(dotnet complete --position "${COMP_POINT}" "${COMP_LINE}" 2>/dev/null)"' >> /etc/profile.d/dotnet.sh \
+    && echo '  if [ $? -ne 0 ]; then' >> /etc/profile.d/dotnet.sh \
+    && echo '    completions=""' >> /etc/profile.d/dotnet.sh \
+    && echo '  fi' >> /etc/profile.d/dotnet.sh \
+    && echo '  COMPREPLY=( $(compgen -W "$completions" -- "$word") )' >> /etc/profile.d/dotnet.sh \
+    && echo '}' >> /etc/profile.d/dotnet.sh \
+    && echo 'complete -f -F _dotnet_bash_complete dotnet' >> /etc/profile.d/dotnet.sh \
     #
     # Install Docker CE CLI
     && apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common lsb-release \
@@ -131,7 +140,7 @@ RUN apt-get update \
         && apt-get install -y azure-cli; \
     fi \
     #
-    # [Optional] Install the Azure CLI
+    # [Optional] Install the Terraform CLI
     && if [ "$INSTALL_TERRAFORM_CLI" = "true" ]; then \
         curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add - \
         && echo "deb [arch=$(dpkg --print-architecture)] https://apt.releases.hashicorp.com $(lsb_release -cs) main" > /etc/apt/sources.list.d/hashcorp.list \

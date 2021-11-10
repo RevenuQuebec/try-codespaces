@@ -5,7 +5,7 @@ Container for dotnet 6.0 & node development.
 Docker
 
 ```
-docker pull petganrq/try-it:devcontainers_netcore60-node-latest
+docker pull petganrq/try-it:devcontainers_dotnet60-node-latest
 ```
 
 ## Configurations and tools included into the docker image
@@ -33,7 +33,7 @@ docker pull petganrq/try-it:devcontainers_netcore60-node-latest
 ```json
 {
   "name": "dotnet 6.0 & node lte",
-  "image": "petganrq/try-it:devcontainers_netcore60-node-latest",
+  "image": "petganrq/try-it:devcontainers_dotnet60-node-latest",
   // If you prefere to customize the docker image copy "Dockerfile" to the ".devcontainer" folder, uncomment "dockerFile" below and comment "image"
   // "dockerFile": "Dockerfile",
   "settings": {

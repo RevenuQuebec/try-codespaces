@@ -1,11 +1,11 @@
-# About netcore50-node
+# About dotnet50-node
 
 Container for dotnet 5.0 & node development.
 
 Docker
 
 ```
-docker pull petganrq/try-it:devcontainers_netcore50-node-latest
+docker pull petganrq/try-it:devcontainers_dotnet50-node-latest
 ```
 
 ## Configurations and tools included into the docker image
@@ -33,7 +33,7 @@ docker pull petganrq/try-it:devcontainers_netcore50-node-latest
 ```json
 {
   "name": "dotnet 5.0 & node lte",
-  "image": "petganrq/try-it:devcontainers_netcore50-node-latest",
+  "image": "petganrq/try-it:devcontainers_dotnet50-node-latest",
   // If you prefere to customize the docker image copy "Dockerfile" to the ".devcontainer" folder, uncomment "dockerFile" below and comment "image"
   // "dockerFile": "Dockerfile",
   "settings": {

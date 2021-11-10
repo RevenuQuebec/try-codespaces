@@ -28,7 +28,7 @@ ARG INSTALL_AZURE_CLI="true"
 ARG INSTALL_TERRAFORM_CLI="true"
 
 # Docker Compose version
-ARG COMPOSE_VERSION=1.29.2
+ARG COMPOSE_VERSION=2.0.1
 
 ENV \
     TZ=$DEV_CONTAINER_TZ \
@@ -65,14 +65,8 @@ RUN apt-get update \
     && passwd -l $USER_NVM_NAME \
     # [Optional] Add sudo support for the non-root user
     && apt-get install -y sudo \
-    && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME\
+    && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME \
-    # Avoiding extension reinstalls on container rebuild (Remote Docker)
-    && mkdir -p /home/$USERNAME/.vscode-server/extensions \
-       /home/$USERNAME/.vscode-server-insiders/extensions \
-       # For root also
-       /root/.vscode-server/extensions \
-       /root/.vscode-server-insiders/extensions \
     # Set owner to .vscode-serverXYZ folders
     && chown -R $USERNAME:$USERNAME \
         /home/$USERNAME \
