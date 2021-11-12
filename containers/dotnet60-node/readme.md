@@ -37,11 +37,16 @@ docker pull petganrq/try-it:devcontainers_dotnet60-node-latest
   // If you prefere to customize the docker image copy "Dockerfile" to the ".devcontainer" folder, uncomment "dockerFile" below and comment "image"
   // "dockerFile": "Dockerfile",
   "settings": {
-    "terminal.integrated.shell.linux": "/bin/bash",
-    // Make sure that the user profile is sourced for the shell.
-    "terminal.integrated.shellArgs.linux": [
-      "--login"
-    ],
+    "terminal.integrated.defaultProfile.linux": "bash",
+    "terminal.integrated.profiles.linux": {
+      "bash" : {
+        "path": "/bin/bash",
+        // Make sure that the user profile is sourced for the shell.
+        "args": [
+          "--login"
+        ]
+      }
+    },
     "omnisharp.enableEditorConfigSupport": true,
     "nxConsole.useNVM": true
   },
